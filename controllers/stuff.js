@@ -101,51 +101,44 @@ exports.likeSauce = async (req, res, next) => {
     })
     .catch(error => res.status(404).json({error}));
 
-  }else 
-
-    // when sauce is unliked // 
-    if (like == 0){ 
+  }else if (like == 0){
       Sauce.findOne({ _id: req.params.id })
       .then(sauce => {
 
-        if (sauce.usersLiked.indexOf(userFound._id) == -1){
-          res.status(403).json({error: "Like this sauce first"})
+        if (sauce.usersLiked.indexOf(userFound._id) == -1 && sauce.usersDisliked.indexOf(userFound._id) == -1){
+          res.status(403).json({error: "Like or dislike this sauce first"})
         } 
 
         else{
-        sauce.likes--;
-        const index = sauce.usersLiked.indexOf(userFound._id); //splice method to remove like from array//
-          if (index > -1) {
-          sauce.usersLiked.splice(index, 1);
+          if (sauce.usersLiked.includes(userFound._id)){
+            sauce.likes--;
+            const index = sauce.usersLiked.indexOf(userFound._id); //splice method to remove like from array//
+              if (index > -1) {
+              sauce.usersLiked.splice(index, 1);
+              }
+            console.log('User is trying to unlike the sauce')
           }
-        console.log('User is trying to unlike the sauce')
+        
+          if (sauce.usersDisliked.includes(userFound._id)){
+            sauce.dislikes--;
+            const index = sauce.usersDisliked.indexOf(userFound._id); //splice method to remove like from array//
+            if (index > -1) {
+              sauce.usersDisliked.splice(index, 1);
+            }
+            console.log('User is trying to undislike the sauce')
+          }
+
+          Sauce.updateOne({_id:req.params.id}, sauce)
+            .then(()=> {
+              res.status(200).json({message:'Unlike is updated'})
+            })
+            .catch(error =>{
+              res.status(500).json({message:'Update has failed', error})
+            })
         }
-
-
-        //if (sauce.usersDisliked.indexOf(userFound._id) == -1){
-        //  res.status(403).json({error: "Dislike this sauce first"})
-        //} 
-
-        //else{
-        //sauce.dislikes--;
-        //const index = sauce.usersDisliked.indexOf(userFound._id); //splice method to remove like from array//
-         // if (index > -1) {
-         // sauce.usersDisliked.splice(index, 1);
-         // }
-        //console.log('User is trying to unlike the sauce')
-        //}
-
-
-        Sauce.updateOne({ _id: req.params.id },sauce )
-        .then(() => res.status(200).json({ message: "Unlike updated" })) 
-        .catch((error) => res.status(400).json({ error }));
       })
-      .catch(error => res.status(404).json({error}));
-    
-    }else
 
-      // when sauce is disliked //
-      if (like == -1){
+  }else if (like == -1){
         Sauce.findOne({ _id: req.params.id })
         .then(sauce =>{
           if (sauce.usersDisliked.includes(userFound._id)){
