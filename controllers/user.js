@@ -5,8 +5,8 @@ const validator = require('validator');
 
 
 exports.signup = (req, res, next) => {
-  if(!validator.isEmail(req.body.email) && !validator.isStrongPassword(req.body.password)){
-    res.status(400).json({error:"Email or password not valid"});
+  if(!validator.isEmail(req.body.email) || !validator.isStrongPassword(req.body.password)){ // validator //
+    return res.status(400).json({error:"Email or password not valid"});
   }
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
