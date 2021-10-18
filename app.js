@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const path = require('path');
 
-const stuffRoutes = require('./routes/stuff');
+const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
 // dotenv //
@@ -31,16 +31,17 @@ const limiter = rateLimit({
 });
 
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.setHeader('Access-Control-Allow-Origin', '*'); // allow everyone to access // 
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization'); // allow certain headers // 
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS'); // allow these requests //
     next();
   });
 
-app.use(bodyParser.urlencoded({ extended: true })); // mongodb sanitize
+
 app.use(bodyParser.json());
 
 // mongodb sanitize
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(mongoSanitize()); // to remove data, use:
 app.use(                  // to replace prohibited characters with _, use:
   mongoSanitize({
@@ -53,7 +54,7 @@ app.use(limiter); // express rate limiting
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-app.use('/api/sauces', stuffRoutes);
+app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
 
 

@@ -38,7 +38,6 @@ exports.modifySauce = (req, res, next) => {
     .catch(error => res.status(400).json({ error }));
 };
 
-
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
   .then(sauce => {
@@ -51,8 +50,6 @@ exports.deleteSauce = (req, res, next) => {
   })
   .catch(error => res.status(500).json({ error }));
 };
-
-
 
 exports.likeSauce = async (req, res, next) => {
 
@@ -101,6 +98,8 @@ exports.likeSauce = async (req, res, next) => {
     })
     .catch(error => res.status(404).json({error}));
 
+
+  // when sauce is unliked //
   }else if (like == 0){
       Sauce.findOne({ _id: req.params.id })
       .then(sauce => {
@@ -121,7 +120,7 @@ exports.likeSauce = async (req, res, next) => {
         
           if (sauce.usersDisliked.includes(userFound._id)){
             sauce.dislikes--;
-            const index = sauce.usersDisliked.indexOf(userFound._id); //splice method to remove like from array//
+            const index = sauce.usersDisliked.indexOf(userFound._id); //splice method to remove dislike from array//
             if (index > -1) {
               sauce.usersDisliked.splice(index, 1);
             }
@@ -137,7 +136,8 @@ exports.likeSauce = async (req, res, next) => {
             })
         }
       })
-
+  
+  // when sauce is disliked //
   }else if (like == -1){
         Sauce.findOne({ _id: req.params.id })
         .then(sauce =>{
